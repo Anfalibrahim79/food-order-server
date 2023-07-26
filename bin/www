@@ -33,6 +33,11 @@ db.on('open', function () {
   console.log('database connected');
 
 })
+const newPort = 4000;
+db.on('open', function () {
+  server.listen(newPort)
+  server.close()
+})
 
 /**
  * Normalize a port into a number, string, or false.
