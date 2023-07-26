@@ -193,7 +193,7 @@ const index = async (req, res, next) => {
 
     let criteria = {};
 
-    if (q.length) {
+    if (q.length > 3) {
       criteria = {
         ...criteria,
         name: { $regex: `${q}`, $options: 'i' }
