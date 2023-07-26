@@ -31,6 +31,7 @@ db.on('open', function () {
   server.on('error', onError);
   server.on('listening', onListening);
   console.log('database connected');
+  server.close()
 })
 
 /**
