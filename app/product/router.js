@@ -1,20 +1,22 @@
 const router = require('express').Router();
 const multer = require('multer');
 const os = require('os');
+const { storageCloud } = require('../../utils')
 const { police_check } = require('../../middlewares');
 
 const productController = require('./controller');
+const upload = multer({ storage: storageCloud })
 
 router.get('/',
   productController.index
 );
 router.post('/',
-  multer({ dest: os.tmpdir() }).single('image'),
+  upload.single('image'),
   police_check('create', 'Product'),
   productController.store
 );
 router.put('/:id',
-  multer({ dest: os.tmpdir() }).single('image'),
+  upload.single('image'),
   police_check('update', 'Product'),
   productController.update
 );

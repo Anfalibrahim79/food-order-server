@@ -47,7 +47,7 @@ const login = async (req, res, next) => {
 
     if (!user) return res.json({ error: 1, message: 'Email or Password incorect' });
 
-    let signed = jwt.sign(user, config.secretkey, { expiresIn: '1m' });
+    let signed = jwt.sign(user, config.secretkey, { expiresIn: '1h' });
 
     await User.findByIdAndUpdate(user._id, { $push: { token: signed } });
 

@@ -8,6 +8,8 @@ const Tag = require('../tag/model');
 const store = async (req, res, next) => {
   try {
     let payload = req.body;
+    console.log(req.file);
+
 
     // update karena relasi dengan category
     if (payload.category) {
@@ -32,48 +34,20 @@ const store = async (req, res, next) => {
       }
     }
 
-    if (req.file) {
-      let tmp_path = req.file.path;
-      let originalExt = req.file.originalname.split('.')[req.file.originalname.split('.').length - 1];
-      let filename = req.file.filename + '.' + originalExt;
-      let target_path = path.resolve(config.rootPath, `public/images/products/${filename}`);
-
-      const src = fs.createReadStream(tmp_path);
-      const dest = fs.createWriteStream(target_path);
-      src.pipe(dest);
-
-      src.on('end', async () => {
-        try {
-
-          let product = new Product({ ...payload, image_url: filename })
-          await product.save()
-          return res.json(product);
-
-        } catch (err) {
-          fs.unlinkSync(target_path);
-          if (err && err.name === 'ValidationError') {
-            return res.json({
-              error: 1,
-              message: err.message,
-              fields: err.errors
-            })
-          }
-
-          next(err);
-        }
-      });
-
-      src.on('error', async () => {
-        next(err);
-      });
-
-    } else {
-
-      let product = new Product(payload);
-      await product.save();
-      return res.json(product);
-
+    if (!req.file) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Tidak ada gambar yang diupload'
+      })
     }
+    let target_path = req.file.path;
+
+    let product = new Product({ ...payload, image_url: target_path });;
+    await product.save()
+    return res.status(201).json({
+      status: 201,
+      data: product
+    })
   } catch (err) {
     if (err && err.name === 'ValidationError') {
       return res.json({
